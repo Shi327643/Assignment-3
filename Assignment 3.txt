@@ -1,0 +1,139 @@
+1)LIST ALL THE DATA FROM THE EMPLOYEE TABLE
+
+silution:- 
+            IEnumerable<Emp> query15;
+            query15 = from e in db.Emps select e;
+
+2)LIST ALL THE DATA FROM THE EMPLOYEE TABLE ORDER BY JOB
+
+solution:- var query16 = from e in db.Emps  // Question 2
+                          orderby e.Job
+                          select new {e.EName, e.Job};
+
+3)LIST ALL THE DATA FROM THE EMPLOYEE TABLE WHOSE NAME 
+START WITH S
+
+solution:-var query17 = from e in db.Emps // Question 3
+                          where e.EName.StartsWith("s")
+                          select e;
+
+4)LIST DISTINCT JOB
+
+solution:-  var query18 = (from e in db.Emps // Question 4
+                          select new {e.Job}).Distinct();
+
+5)FIND THE DETAILS OF ALL MANAGER (IN ANY DEPT) AND ALL 
+CLERKS IN DEPT 10
+
+solution:-var query19 = (from e in db.Emps // Question 5
+                          where e.Job == "clerk" && e.DeptNo == 20
+                          select e).Union(from e in db.Emps
+                                           where e.Job == "manager"
+                                           select e);
+
+6)FIND THE EMPLOYEES WHO DO NOT RECEIVE A COMMISSION
+
+solution:var query20 = from e in db.Emps where e.Comm==null select e; // Question 6
+
+7)FIND ALL EMPLOYEES WHOSE NET EARNINGS (SAL + COMM) IS 
+GREATER THAN RS. 2000
+
+solution:-var query21 = from e in db.Emps // Question 7
+                          let NetEarning = e.Sal + e.Comm > 2000
+                          
+                          select new { e.EName, NetEarning};
+
+8)FIND ALL EMPLOYEE HIRED IN MONTH OF DECEMBER (OF ANY 
+YEAR)
+
+solutiom:-
+
+9)LIST Average SALARY FOR THE ORGANIZATION
+
+solution:- var query23 = (from e in db.Emps select e).Average(e => e.Sal); // Question 9
+            Console.WriteLine("Average salary is \t" + query23);
+
+10)LIST TOTAL EMPLOYEES WORKS IN EACH DEPARTMENT
+
+solution:-var query24 = from e in db.Emps // Question 10
+                          group e by e.DeptNo into DeptGroup
+                          select new
+                          {
+                              department = DeptGroup.Key,
+                              TotalEmployees = DeptGroup.Count()
+                          };
+
+11)LIST FIRST THREE HIGHEST PAID EMPLOYEES
+
+solution:- var query25 = (from e in db.Emps // Question 11
+                           orderby e.Sal descending
+                           select e).Take(3);
+
+12)DISPLAY THE NAMES, JOB AND SALARY OF ALL EMPLOYEES, 
+SORTED ON DESCENDING ORDER OF JOB AND WITHIN JOB, 
+SORTED ON THE DESCENDING ORDER OF SALARY
+
+solution:- var query26 = (from e in db.Emps // Question 12
+                          orderby e.Job descending
+                          select e).ThenByDescending(e => e.Sal);
+
+13) LIST DEPARTMENT NAME, EMPLOYEE NAME AND JOB
+
+solution:-var query28 = from e in db.Emps //Question 13
+                          join d in db.Depts
+                          on e.DeptNo equals d.DeptNo
+                          orderby e.DeptNo
+                          select new { d.DName, e.EName, e.Job };
+
+14)LIST DEPARTMENT NAME AND MAX SALARY FOR EACH DEPARTMENT
+
+solution:- var query29 = from d in db.Depts //Question 14
+                          join e in db.Emps
+                          on d.DeptNo equals e.DeptNo
+                          orderby e.DeptNo
+                          group e by d.DName into DeptGroup
+                          select new 
+                          {
+                              department = DeptGroup.Key,
+                              TotalSal = DeptGroup.Max(e => e.Sal)
+                          };
+
+15)LIST DEPARTMENT NAME AND all EMPLOYEE WORKING IN EACH 
+DEPARTMENT ALSO INCLUDE DEPARTMENT WHERE NO EMPLOYEES 
+ARE WORKING
+
+solution:- var query30 = (from e in db.Emps //Question 15
+                           join d in db.Depts
+                           on e.DeptNo equals d.DeptNo  
+                           orderby d.DName
+                           
+
+                           select new
+                           {
+                               
+                               e.EName,
+                               d.DeptNo,
+                               e.Job,
+                               d.DName,
+                               
+                               e.Sal
+
+                           });
+
+
+
+            var query31 = (from d in db.Depts //Question 15
+                           join e in db.Emps.DefaultIfEmpty()
+                           on d.DeptNo equals e.DeptNo  
+                           orderby d.DName
+
+                           select new
+                           {
+                               e.EName,
+                               d.DeptNo,
+                               e.Job,
+                               d.DName,
+                               e.Sal
+
+                           });
+            var query32 = query30.Union(query31); // Question 15
